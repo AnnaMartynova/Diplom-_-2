@@ -5,6 +5,8 @@ import io.qameta.allure.Step;
 import api.models.User;
 import io.restassured.response.Response;
 
+import static org.apache.http.HttpStatus.SC_OK;
+
 public class UserSteps {
     private UserClient userClient = new UserClient();
 
@@ -17,7 +19,7 @@ public class UserSteps {
     public String createUserAndGetToken(User user) {
         return userClient.create(user)
                 .then()
-                .statusCode(200)
+                .statusCode(SC_OK)
                 .extract()
                 .path("accessToken");
     }
