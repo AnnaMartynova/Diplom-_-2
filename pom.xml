@@ -12,10 +12,17 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Версии лучше вынести в properties для удобства обновления -->
         <allure.version>2.19.0</allure.version>
         <aspectj.version>1.9.19</aspectj.version>
         <rest-assured.version>5.3.0</rest-assured.version>
         <lombok.version>1.18.42</lombok.version>
+        <junit.version>4.13.2</junit.version>
+        <jackson.version>2.15.2</jackson.version>
+        <gson.version>2.10.1</gson.version>
+        <httpclient.version>4.5.14</httpclient.version>
+        <hamcrest.version>1.3</hamcrest.version>
     </properties>
 
     <dependencies>
@@ -23,11 +30,11 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.13.2</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
 
-        <!-- Rest Assured для тестирования API -->
+        <!-- Rest Assured -->
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
@@ -35,23 +42,21 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Allure JUnit 4 адаптер -->
+        <!-- Rest Assured JSON схема валидатор (полезно для сложных проверок) -->
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>json-schema-validator</artifactId>
+            <version>${rest-assured.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Allure -->
         <dependency>
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-junit4</artifactId>
             <version>${allure.version}</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- Allure дополнение для работы с аннотациями -->
-        <dependency>
-            <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-attachments</artifactId>
-            <version>${allure.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- Allure Rest Assured для логирования запросов/ответов -->
         <dependency>
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-rest-assured</artifactId>
@@ -59,52 +64,54 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Apache HttpClient для HttpStatus констант -->
+        <!-- Apache HttpClient -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5.14</version>
+            <version>${httpclient.version}</version>
         </dependency>
 
-        <!-- Hamcrest для matchers -->
+        <!-- Hamcrest -->
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>
-            <version>1.3</version>
+            <version>${hamcrest.version}</version>
             <scope>test</scope>
         </dependency>
 
-        <!-- Gson для работы с JSON -->
+        <!-- JSON библиотеки - обычно достаточно одной -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.10.1</version>
+            <version>${gson.version}</version>
         </dependency>
 
-        <!-- Jackson для работы с JSON (альтернатива Gson) -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.15.2</version>
-        </dependency>
-
-        <!-- Lombok для упрощения кода -->
+        <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- SLF4J для логирования (полезно для отладки) -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.36</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
-            <!-- Плагин для компиляции -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
                 <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
@@ -115,28 +122,24 @@
                 </configuration>
             </plugin>
 
-            <!-- Плагин для запуска тестов с AspectJ (для Allure) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
+                <version>3.0.0-M9</version> <!-- Более новая версия -->
                 <configuration>
                     <testFailureIgnore>false</testFailureIgnore>
                     <argLine>
                         -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
                     </argLine>
+                    <systemPropertyVariables>
+                        <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
+                    </systemPropertyVariables>
                     <properties>
                         <property>
                             <name>listener</name>
                             <value>io.qameta.allure.junit4.AllureJunit4</value>
                         </property>
                     </properties>
-                    <systemProperties>
-                        <property>
-                            <name>allure.results.directory</name>
-                            <value>${project.build.directory}/allure-results</value>
-                        </property>
-                    </systemProperties>
                 </configuration>
                 <dependencies>
                     <dependency>
@@ -147,7 +150,6 @@
                 </dependencies>
             </plugin>
 
-            <!-- Плагин для генерации Allure отчета -->
             <plugin>
                 <groupId>io.qameta.allure</groupId>
                 <artifactId>allure-maven</artifactId>
@@ -155,10 +157,32 @@
                 <configuration>
                     <reportVersion>${allure.version}</reportVersion>
                     <resultsDirectory>${project.build.directory}/allure-results</resultsDirectory>
-                    <reportDirectory>${project.build.directory}/site/allure-maven-plugin</reportDirectory>
                 </configuration>
             </plugin>
         </plugins>
     </build>
 
+    <!-- Профиль для быстрого запуска Allure отчета -->
+    <profiles>
+        <profile>
+            <id>allure-report</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>io.qameta.allure</groupId>
+                        <artifactId>allure-maven</artifactId>
+                        <executions>
+                            <execution>
+                                <id>allure-report</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

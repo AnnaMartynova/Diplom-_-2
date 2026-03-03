@@ -41,110 +41,46 @@ public class OrderTest {
     }
 
     @Test
-    @DisplayName("Заказ с авторизацией: статус 200")
-    @Description("Проверка, что при создании заказа с авторизацией возвращается статус 200")
-    public void orderWithAuthReturnsStatus200() {
-        orderSteps.createOrderWithAuth(validIngredients, token)
-                .then()
-                .statusCode(SC_OK);
-    }
-
-    @Test
-    @DisplayName("Заказ с авторизацией: success = true")
-    @Description("Проверка, что при создании заказа с авторизацией возвращается success = true")
-    public void orderWithAuthReturnsSuccessTrue() {
+    @DisplayName("Заказ с авторизацией: успешное создание")
+    @Description("Проверка, что при создании заказа с авторизацией возвращается статус 200, success = true, name и номер заказа")
+    public void orderWithAuthReturnsSuccessResponse() {
         orderSteps.createOrderWithAuth(validIngredients, token)
                 .then()
                 .statusCode(SC_OK)
-                .body("success", is(true));
-    }
-
-    @Test
-    @DisplayName("Заказ с авторизацией: возвращается name")
-    @Description("Проверка, что при создании заказа с авторизацией возвращается название заказа")
-    public void orderWithAuthReturnsName() {
-        orderSteps.createOrderWithAuth(validIngredients, token)
-                .then()
-                .statusCode(SC_OK)
-                .body("name", notNullValue());
-    }
-
-    @Test
-    @DisplayName("Заказ с авторизацией: возвращается номер заказа")
-    @Description("Проверка, что при создании заказа с авторизацией возвращается номер заказа")
-    public void orderWithAuthReturnsOrderNumber() {
-        orderSteps.createOrderWithAuth(validIngredients, token)
-                .then()
-                .statusCode(SC_OK)
+                .body("success", is(true))
+                .body("name", notNullValue())
                 .body("order.number", notNullValue());
     }
 
     @Test
-    @DisplayName("Заказ без авторизации: статус 200")
-    @Description("Проверка, что при создании заказа без авторизации возвращается статус 200")
-    public void orderWithoutAuthReturnsStatus200() {
-        orderSteps.createOrderWithoutAuth(validIngredients)
-                .then()
-                .statusCode(SC_OK);
-    }
-
-    @Test
-    @DisplayName("Заказ без авторизации: success = true")
-    @Description("Проверка, что при создании заказа без авторизации возвращается success = true")
-    public void orderWithoutAuthReturnsSuccessTrue() {
+    @DisplayName("Заказ без авторизации: успешное создание")
+    @Description("Проверка, что при создании заказа без авторизации возвращается статус 200, success = true, name и номер заказа")
+    public void orderWithoutAuthReturnsSuccessResponse() {
         orderSteps.createOrderWithoutAuth(validIngredients)
                 .then()
                 .statusCode(SC_OK)
-                .body("success", is(true));
-    }
-
-    @Test
-    @DisplayName("Заказ без авторизации: возвращается name")
-    @Description("Проверка, что при создании заказа без авторизации возвращается название заказа")
-    public void orderWithoutAuthReturnsName() {
-        orderSteps.createOrderWithoutAuth(validIngredients)
-                .then()
-                .statusCode(SC_OK)
-                .body("name", notNullValue());
-    }
-
-    @Test
-    @DisplayName("Заказ без авторизации: возвращается номер заказа")
-    @Description("Проверка, что при создании заказа без авторизации возвращается номер заказа")
-    public void orderWithoutAuthReturnsOrderNumber() {
-        orderSteps.createOrderWithoutAuth(validIngredients)
-                .then()
-                .statusCode(SC_OK)
+                .body("success", is(true))
+                .body("name", notNullValue())
                 .body("order.number", notNullValue());
     }
 
     @Test
-    @DisplayName("Заказ без ингредиентов: статус 400")
-    @Description("Проверка, что при создании заказа без ингредиентов возвращается статус 400")
-    public void orderWithoutIngredientsReturnsStatus400() {
-        Ingredients emptyIngredients = orderSteps.createEmptyIngredients();
-
-        orderSteps.createOrderWithAuth(emptyIngredients, token)
-                .then()
-                .statusCode(SC_BAD_REQUEST);
-    }
-
-    @Test
-    @DisplayName("Заказ без ингредиентов: сообщение об ошибке")
-    @Description("Проверка, что при создании заказа без ингредиентов возвращается правильное сообщение об ошибке")
-    public void orderWithoutIngredientsReturnsErrorMessage() {
+    @DisplayName("Заказ без ингредиентов: ошибка 400")
+    @Description("Проверка, что при создании заказа без ингредиентов возвращается статус 400 и сообщение об ошибке")
+    public void orderWithoutIngredientsReturnsError() {
         Ingredients emptyIngredients = orderSteps.createEmptyIngredients();
 
         orderSteps.createOrderWithAuth(emptyIngredients, token)
                 .then()
                 .statusCode(SC_BAD_REQUEST)
+                .body("success", is(false))
                 .body("message", equalTo("Ingredient ids must be provided"));
     }
 
     @Test
-    @DisplayName("Заказ с неверным хешем: статус 500")
+    @DisplayName("Заказ с неверным хешем ингредиента: ошибка 500")
     @Description("Проверка, что при создании заказа с неверным хешем ингредиента возвращается статус 500")
-    public void orderWithInvalidHashReturnsStatus500() {
+    public void orderWithInvalidHashReturnsError() {
         Ingredients invalidIngredients = orderSteps.createInvalidIngredients();
 
         orderSteps.createOrderWithAuth(invalidIngredients, token)
