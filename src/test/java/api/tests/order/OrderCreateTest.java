@@ -1,4 +1,4 @@
-package api.tests;
+package api.tests.order;
 
 import api.models.Ingredients;
 import api.models.User;
@@ -16,7 +16,7 @@ import static org.apache.http.HttpStatus.*;
 import static org.hamcrest.Matchers.*;
 
 @RunWith(JUnit4.class)
-public class OrderTest {
+public class OrderCreateTest {
     private OrderSteps orderSteps;
     private UserSteps userSteps;
     private String token;
@@ -41,9 +41,9 @@ public class OrderTest {
     }
 
     @Test
-    @DisplayName("Заказ с авторизацией: успешное создание")
-    @Description("Проверка, что при создании заказа с авторизацией возвращается статус 200, success = true, name и номер заказа")
-    public void orderWithAuthReturnsSuccessResponse() {
+    @DisplayName("Создание заказа с авторизацией: успешный сценарий")
+    @Description("Проверка статуса 200 и всех полей ответа при создании заказа с авторизацией")
+    public void createOrderWithAuthSuccess() {
         orderSteps.createOrderWithAuth(validIngredients, token)
                 .then()
                 .statusCode(SC_OK)
@@ -53,9 +53,9 @@ public class OrderTest {
     }
 
     @Test
-    @DisplayName("Заказ без авторизации: успешное создание")
-    @Description("Проверка, что при создании заказа без авторизации возвращается статус 200, success = true, name и номер заказа")
-    public void orderWithoutAuthReturnsSuccessResponse() {
+    @DisplayName("Создание заказа без авторизации: успешный сценарий")
+    @Description("Проверка статуса 200 и всех полей ответа при создании заказа без авторизации")
+    public void createOrderWithoutAuthSuccess() {
         orderSteps.createOrderWithoutAuth(validIngredients)
                 .then()
                 .statusCode(SC_OK)
@@ -65,9 +65,9 @@ public class OrderTest {
     }
 
     @Test
-    @DisplayName("Заказ без ингредиентов: ошибка 400")
-    @Description("Проверка, что при создании заказа без ингредиентов возвращается статус 400 и сообщение об ошибке")
-    public void orderWithoutIngredientsReturnsError() {
+    @DisplayName("Создание заказа без ингредиентов: ошибка 400")
+    @Description("Проверка статуса 400 и сообщения об ошибке при пустом списке ингредиентов")
+    public void createOrderWithoutIngredientsReturnsError() {
         Ingredients emptyIngredients = orderSteps.createEmptyIngredients();
 
         orderSteps.createOrderWithAuth(emptyIngredients, token)
@@ -78,9 +78,9 @@ public class OrderTest {
     }
 
     @Test
-    @DisplayName("Заказ с неверным хешем ингредиента: ошибка 500")
-    @Description("Проверка, что при создании заказа с неверным хешем ингредиента возвращается статус 500")
-    public void orderWithInvalidHashReturnsError() {
+    @DisplayName("Создание заказа с неверным хешем ингредиента: ошибка 500")
+    @Description("Проверка статуса 500 при передаче неверного хеша ингредиента")
+    public void createOrderWithInvalidHashReturnsError() {
         Ingredients invalidIngredients = orderSteps.createInvalidIngredients();
 
         orderSteps.createOrderWithAuth(invalidIngredients, token)
