@@ -1,0 +1,31 @@
+<div>POST to https://stellarburgers.education-services.ru/api/orders</div>
+
+<h4>Body</h4>
+<div>
+    <pre class="preformated-text">
+{
+    &quot;ingredients&quot;: [
+        &quot;invalid123&quot;,
+        &quot;wrong456&quot;
+    ]
+}    </pre>
+</div>
+
+<h4>Headers</h4>
+<div>
+        <div>Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OWFlN2JlOTg0MjcwMDAxYmU1M2NjYyIsImlhdCI6MTc3MTc1OTU1MCwiZXhwIjoxNzcxNzYwNzUwfQ.0eV2mT8-1h1PPPkbX7AWHecYDbyMPf8Iwt42_UdLbYE</div>
+        <div>Accept: */*</div>
+        <div>Content-Type: application/json</div>
+</div>
+
+
+
+<h4>Curl</h4>
+<div>
+curl -v -X POST &#39;https://stellarburgers.education-services.ru/api/orders&#39; -H &#39;Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OWFlN2JlOTg0MjcwMDAxYmU1M2NjYyIsImlhdCI6MTc3MTc1OTU1MCwiZXhwIjoxNzcxNzYwNzUwfQ.0eV2mT8-1h1PPPkbX7AWHecYDbyMPf8Iwt42_UdLbYE&#39; -H &#39;Accept: */*&#39; -H &#39;Content-Type: application/json&#39; -d &#39;{
+    &quot;ingredients&quot;: [
+        &quot;invalid123&quot;,
+        &quot;wrong456&quot;
+    ]
+}&#39;
+</div>
